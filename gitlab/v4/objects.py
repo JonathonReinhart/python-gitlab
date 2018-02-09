@@ -987,7 +987,7 @@ class ProjectJob(RESTObject):
 
     @cli.register_custom_action('ProjectJob')
     @exc.on_http_error(exc.GitlabGetError)
-    def artifacts(self, streamed=False, action=None, chunk_size=1024,
+    def artifacts(self, artifact_path=None, streamed=False, action=None, chunk_size=1024,
                   **kwargs):
         """Get the job artifacts.
 
@@ -1008,6 +1008,8 @@ class ProjectJob(RESTObject):
             str: The artifacts if `streamed` is False, None otherwise.
         """
         path = '%s/%s/artifacts' % (self.manager.path, self.get_id())
+        if artifact_path:
+            path += '/' + artifact_path
         result = self.manager.gitlab.http_get(path, streamed=streamed,
                                               **kwargs)
         return utils.response_content(result, streamed, action, chunk_size)
